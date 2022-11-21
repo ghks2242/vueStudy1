@@ -1,35 +1,49 @@
 <template>
-  <div class="inputBox shadow" >
-    <input type="text" v-model="newTodoItem" v-on:keyup.enter="addTodo">
+  <div class="inputBox shadow">
+    <input type="text" v-model="newTodoItem" v-on:keyup.enter="addTodo" />
     <!-- <button @click="addTodo">add</button> -->
     <span class="addContainer">
       <i class="addBtn" @click="addTodo">추가</i>
     </span>
-    </div>
+    <Alert-modal v-if="showModal" @close="showModal = false">
+      <h3 slot="header">
+        경고!
+        <button class="modal-default-button" @click="showModal = false">
+          OK
+        </button>
+      </h3>
+      <h3 slot="body">아무것도 입력하지 않았습니다.</h3>
+      <h3 slot="footer">custom footer</h3>
+    </Alert-modal>
+  </div>
 </template>
 
 <script>
-
+import AlertModal from "./common/AlertModal.vue";
 export default {
-  data: ()=> {
-    return {
-      newTodoItem: ""
-    }
+  components: {
+    AlertModal,
   },
-  watch() {
-
+  data: () => {
+    return {
+      newTodoItem: "",
+      showModal: false,
+    };
   },
   methods: {
     addTodo() {
-      if (this.newTodoItem !=='') {
+      if (this.newTodoItem !== "") {
         this.$emit("addTodoItem", this.newTodoItem);
         this.clearInput();
+      } else {
+        this.showModal = !this.showModal;
       }
     },
     clearInput() {
       this.newTodoItem = "";
-    }
-  }
+    },
+    close() {},
+  },
 };
 </script>
 
@@ -47,9 +61,9 @@ input:focus {
   border-style: none;
   font-size: 0.9rem;
 }
-.addContainer{
+.addContainer {
   float: right;
-  background: linear-gradient(to right, #6478FB, #8763FB);
+  background: linear-gradient(to right, #6478fb, #8763fb);
   display: block;
   width: 3rem;
   border-radius: 0 05px 5px 0;

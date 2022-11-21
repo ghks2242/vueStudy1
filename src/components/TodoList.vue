@@ -1,39 +1,44 @@
 <template>
   <div>
-    <ul>
-      <li v-for="(todoItem, index) in propsdata" :key="todoItem.item" class="shadow">
-        <span class="checkBtn" :class="{checkBtnCompleted: todoItem.completed}" @click="toggleComplete(todoItem,index)"> 체크 </span>
-        <span :class="{textCompleted: todoItem.completed}">{{todoItem.item}}</span>
+    <transition-group name="list" tag="ul">
+      <li
+        v-for="(todoItem, index) in propsdata"
+        :key="todoItem.item"
+        class="shadow"
+      >
+        <span
+          class="checkBtn"
+          :class="{ checkBtnCompleted: todoItem.completed }"
+          @click="toggleComplete(todoItem, index)"
+        >
+          체크
+        </span>
+        <span :class="{ textCompleted: todoItem.completed }">{{
+          todoItem.item
+        }}</span>
         <span class="removeBtn">
           <i @click="removeTodo(todoItem, index)">삭제</i>
         </span>
       </li>
-    </ul>
+    </transition-group>
   </div>
 </template>
 
 <script>
 export default {
   props: {
-    propsdata : {
+    propsdata: {
       type: Array,
-
     },
   },
   methods: {
     removeTodo(item, key) {
-      console.log(item +" , " + key)
-      localStorage.removeItem(item)
-      this.todoItems.splice(key, 1)
+      this.$emit("removeItem", item, key);
     },
     toggleComplete(item, key) {
-      console.log(item + " " + key)
-      item.completed = !item.completed;
-      localStorage.removeItem(item.item)
-      localStorage.setItem(item.item, JSON.stringify(item))
-
-    }
-  }
+      this.$emit("toggleItem", item, key);
+    },
+  },
 };
 </script>
 
@@ -59,15 +64,26 @@ li {
   color: #62acde;
   margin-right: 5px;
 }
-.checkBtnCompleted{
+.checkBtnCompleted {
   color: #b3adad;
 }
-.textCompleted{
+.textCompleted {
   text-decoration: line-through;
   color: #b3adad;
 }
-.removeBtn{
+.removeBtn {
   margin-left: auto;
-  color:#de4343
+  color: #de4343;
+}
+
+/** 리스트 아이템 트렌지션 효과 */
+
+.list-enter-active,
+.list-leave-active {
+  transition: all 1s;
+}
+.list-enter, .list-leave-to /* .list-leave-active below version 2.1.8 */ {
+  opacity: 0;
+  transform: translateY(30px);
 }
 </style>
